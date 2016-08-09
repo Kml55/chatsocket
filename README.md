@@ -9,13 +9,15 @@ Download and use [chatin](https://play.google.com/store/apps/details?id=com.ante
 
 Add these in your app level build.gradle
 
-`repositories {
+```repositories {
     maven {
         url 'https://dl.bintray.com/kml55/maven'
     }
-}`
+}```
 
-`dependencies {
+```dependencies {
     compile 'com.anten.socketconnector:socketconnector:0.0.2'
-}`
+}```
+
+
 
