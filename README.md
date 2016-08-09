@@ -45,5 +45,11 @@ Client socketClient = new Client(USERNAME,SECRET,new SocketListener(){
         Log.i("socketClosed");
     }
 });
+
+//connect to a room with a nick
+socketClient.connect(roomId,nick);
+
+//send message
+socketClient.sendMessage("hello everyone");
 ```
 
