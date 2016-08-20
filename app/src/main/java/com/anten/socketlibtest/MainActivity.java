@@ -1,15 +1,16 @@
 package com.anten.socketlibtest;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.anten.socketconnector.Client;
 import com.anten.socketconnector.SocketListener;
@@ -23,7 +24,9 @@ public class MainActivity extends AppCompatActivity {
     private Client mSocketClient;
 
     private final String USERNAME = "your_username";
-    private final String SECRET = "your_secretkey";
+    private final String SECRET = "your_secret";
+
+    private Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +39,9 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        handler = new Handler();
+
+        final FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -48,17 +53,33 @@ public class MainActivity extends AppCompatActivity {
         mSocketClient = new Client(USERNAME,SECRET,new SocketListener(){
             @Override
             public void connected() {
-                mConnectBtn.setText("Disconnect");
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateConnectBtnText("Disconnect");
+                    }
+                });
             }
 
             @Override
-            public void messageRecieved(String s) {
-                Log.i("Message Received",s);
+            public void messageRecieved(final String s) {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        showMessageToast(s);
+                    }
+                });
+
             }
 
             @Override
             public void socketClosed() {
-                mConnectBtn.setText("Connect");
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateConnectBtnText("Connect");
+                    }
+                });
             }
         });
         mConnectBtn.setOnClickListener(new View.OnClickListener() {
@@ -73,6 +94,14 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    public void updateConnectBtnText(String text){
+        mConnectBtn.setText(text);
+    }
+
+    public void showMessageToast(String mes){
+        Toast.makeText(MainActivity.this,mes,Toast.LENGTH_LONG).show();
     }
 
     @Override
